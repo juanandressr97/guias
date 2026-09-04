@@ -334,7 +334,13 @@
   // vuelve a empezar. Sin servidor no hay forma de evitarlo.
   var HORAS=12;
   var TOPE=null;
-  var K='rr_gomitas_acv_fin', fin=null;
+  // 🔴 LA CLAVE LLEVA DENTRO LAS HORAS (4/9/2026). Antes era fija por imán, y eso hacía que a
+  // alguien le saliera «el código expiró» la PRIMERA vez que abría una página — porque su
+  // navegador guardaba un vencimiento de OTRA versión del mismo imán, ya pasado. La guarda de
+  // abajo solo cazaba valores demasiado en el FUTURO; un valor viejo del pasado se respetaba tal
+  // cual y la página nacía vencida. Con las horas dentro, cada variante estrena su propio reloj,
+  // que además es lo que hace medible la prueba A/B: la de 12 h y la de 4 h no se pisan.
+  var K='rr_gomitas_acv_'+HORAS+'h_fin', fin=null;
   try{
     fin=Number(localStorage.getItem(K))||null;
     // Si lo guardado apunta más lejos de lo que dura la ventana, es basura de otra versión.
