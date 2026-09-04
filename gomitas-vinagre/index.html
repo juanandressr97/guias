@@ -249,7 +249,7 @@
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 16px; border: 1px dashed rgba(232,211,168,0.65); background: rgba(232,211,168,0.09);">
         <span style="display: flex; flex-direction: column; gap: 4px;">
           <span style="font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #E8D3A8;">Tu código de 20%</span>
-          <span style="font-family: 'Bebas Neue', sans-serif; font-size: 30px; line-height: 1; letter-spacing: 0.06em; color: #FFF3DC;"><span class="js-codigo">acv26</span><svg class="ic-copiar" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+          <span style="font-family: 'Bebas Neue', sans-serif; font-size: 30px; line-height: 1; letter-spacing: 0.06em; color: #FFF3DC;"><span class="js-codigo" data-c="YWN2MjY="></span><svg class="ic-copiar" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
         </span>
         <span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
           <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; line-height: 1; color: #FFF3DC;"><span class="js-hh">24</span>:<span class="js-mm">00</span>:<span class="js-ss">00</span></span>
@@ -304,7 +304,7 @@
     <div data-reveal="1" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-radius: 20px; border: 1px dashed rgba(232,211,168,0.65); background: rgba(232,211,168,0.09);">
       <span style="display: flex; flex-direction: column; gap: 4px;">
         <span style="font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: #E8D3A8;">Tu código de 20%</span>
-        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; letter-spacing: 0.06em; color: #FFF3DC;"><span class="js-codigo">acv26</span><svg class="ic-copiar" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; letter-spacing: 0.06em; color: #FFF3DC;"><span class="js-codigo" data-c="YWN2MjY="></span><svg class="ic-copiar" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
       </span>
       <span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px;">
         <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; line-height: 1; color: #FFF3DC;"><span class="js-hh">24</span>:<span class="js-mm">00</span>:<span class="js-ss">00</span></span>
@@ -343,6 +343,13 @@
   if(TOPE) fin=Math.min(fin,TOPE);   // el reloj nunca promete un código ya muerto en Stan
 
   var q=function(s){ return [].slice.call(document.querySelectorAll(s)); };
+  // El código se ARMA aquí desde data-c: en el HTML servido no está en claro.
+  function armarCodigo(){ q('.js-codigo').forEach(function(e){
+    if(!e.dataset.c) return;
+    try{ e.textContent=decodeURIComponent(escape(atob(e.dataset.c))); }catch(err){ e.textContent=atob(e.dataset.c); }
+  }); }
+  function borrarCodigo(){ q('.js-codigo').forEach(function(e){ e.textContent=''; delete e.dataset.c; e.removeAttribute('data-c'); }); }
+  armarCodigo();
   var dos=function(n){ return (n<10?'0':'')+n; };
 
   function pinta(){
@@ -353,6 +360,7 @@
     q('.js-ss').forEach(function(e){ e.textContent=dos(s%60); });
     if(r>0) return;
     clearInterval(id);
+    borrarCodigo();   // al vencer NO basta con ocultarlo: se saca del DOM
     q('.js-vigente').forEach(function(e){ e.style.display='none'; });
     q('.js-vencido').forEach(function(e){ e.style.display=''; });
     q('.js-cta').forEach(function(e){ e.textContent='Ver el reto'; });
