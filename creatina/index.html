@@ -348,7 +348,11 @@
   try{
     var raw=new URLSearchParams(location.search).get('c');
     if(raw){
-      var n=Number(raw), t=isFinite(n)&&n>0 ? (n<1e12? n*1000 : n) : Date.parse(raw);
+      // ManyChat puede mandar «YYYY-MM-DD HH:MM:SS» (con espacio o «+»), que Safari no parsea:
+      // se normaliza a ISO con «T» y la zona «+0000» a «+00:00».
+      var iso=String(raw).trim().replace(/[ +](?=d{2}:d{2})/,'T').replace(/([+-]d{2})(d{2})$/,'$1:$2');
+      if(/^d{4}-d{2}-d{2}Td{2}:d{2}(:d{2})?$/.test(iso)) iso+='Z';
+      var n=Number(raw), t=isFinite(n)&&n>0 ? (n<1e12? n*1000 : n) : Date.parse(iso);
       if(isFinite(t) && t<=Date.now()+5*60*1000 && t>Date.now()-60*86400*1000) c=t;
     }
   }catch(e){}
