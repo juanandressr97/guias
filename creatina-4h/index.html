@@ -341,7 +341,19 @@
   // cual y la página nacía vencida. Con las horas dentro, cada variante estrena su propio reloj,
   // que además es lo que hace medible la prueba A/B: la de 12 h y la de 4 h no se pisan.
   var K='rr_creatina_'+HORAS+'h_fin', fin=null;
+  // ⏱️ 23/10/2026 (Juan): el reloj empieza CUANDO ELLA COMENTA, no al abrir. ManyChat añade al
+  // link ?c=<hora del comentario> (epoch en s/ms o fecha ISO). Con eso el reloj es el mismo en
+  // cualquier navegador o teléfono. Sin ?c= (o si no se entiende) sigue como antes, por navegador.
+  var c=null;
   try{
+    var raw=new URLSearchParams(location.search).get('c');
+    if(raw){
+      var n=Number(raw), t=isFinite(n)&&n>0 ? (n<1e12? n*1000 : n) : Date.parse(raw);
+      if(isFinite(t) && t<=Date.now()+5*60*1000 && t>Date.now()-60*86400*1000) c=t;
+    }
+  }catch(e){}
+  if(c){ fin=c+HORAS*3600*1000; try{localStorage.setItem(K,String(fin));}catch(e){} }
+  else try{
     fin=Number(localStorage.getItem(K))||null;
     // Si lo guardado apunta más lejos de lo que dura la ventana, es basura de otra versión.
     if(!fin || fin-Date.now()>HORAS*3600*1000){ fin=Date.now()+HORAS*3600*1000; localStorage.setItem(K,String(fin)); }
